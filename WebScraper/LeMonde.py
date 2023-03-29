@@ -82,13 +82,27 @@ for link in url_list:
     articles = articles_json['rss']['channel']['item']
 
 
-    print(articles)
+    for i in range(0,len(articles)):
+        articles[i]['feed_id'] = link
 
-    producer = KafkaProducer(bootstrap_servers='localhost:9092',value_serializer=lambda v: json.dumps(v).encode('utf-8'))
-    print(producer.bootstrap_connected())
 
-    producer.send('article-topic',articles)
+    url = 'http://127.0.0.1:3000/articles'
 
+    myobj = {"articles_list":articles}
+
+    #x = requests.post(url,json=myobj)
+    x = requests.post(url+"?articles_list="+str(articles))
+
+
+
+    """
+        print(articles)
+    
+        producer = KafkaProducer(bootstrap_servers='localhost:9092',value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+        print(producer.bootstrap_connected())
+    
+        producer.send('article-topic',articles)
+    """
 
 
 
