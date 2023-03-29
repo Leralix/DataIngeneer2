@@ -16,7 +16,7 @@ def index():
 
 @app.route('/articles', methods=['GET','POST'])
 def store_articles():
-    articles_list = request.args.get('articles_list')
+    articles_list = request.json
     producer.send('article-topic', articles_list)
 
 

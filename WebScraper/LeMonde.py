@@ -84,14 +84,15 @@ for link in url_list:
 
     for i in range(0,len(articles)):
         articles[i]['feed_id'] = link
+        url = 'http://127.0.0.1:3000/articles'
+        x = requests.post(url,json=articles[i])
 
 
-    url = 'http://127.0.0.1:3000/articles'
 
-    myobj = {"articles_list":articles}
+
 
     #x = requests.post(url,json=myobj)
-    x = requests.post(url+"?articles_list="+str(articles))
+    #x = requests.post(url+"?articles_list="+str(articles))
 
 
 

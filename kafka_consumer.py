@@ -3,8 +3,9 @@ import json
 from kafka import KafkaConsumer
 
 
-consumer = KafkaConsumer('article-topic',value_deserializer=lambda v: json.loads(v.decode('utf-8')))
+consumer = KafkaConsumer('article-topic',value_deserializer=json.loads)
 print(consumer.bootstrap_connected())
 
 for msg in consumer:
-    print(msg.value)
+    print(msg.value['title'])
+
