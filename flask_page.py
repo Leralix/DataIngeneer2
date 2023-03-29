@@ -18,8 +18,6 @@ def index():
 def store_articles():
     articles_list = request.json
     producer.send('article-topic', articles_list)
-
-
     return "test"
 
 

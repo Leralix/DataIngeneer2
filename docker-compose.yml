@@ -20,6 +20,8 @@ services:
       - zookeeper
     ports:
       - "29092:29092"
+      - "9092:9092"
+
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:32181'
@@ -39,3 +41,11 @@ services:
     working_dir: /scripts
     volumes:
       - ./scripts:/scripts
+  cassandra1:
+      image: cassandra:4
+      ports:
+        - 7000:7000
+        - 9042:9042
+      environment:
+        - CASSANDRA_SEEDS=cassandra1
+        - CASSANDRA_CLUSTER_NAME=cassandra-cluster
