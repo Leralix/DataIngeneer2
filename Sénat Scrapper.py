@@ -1,8 +1,16 @@
-import xmltodict
-import urllib2
-url = "https://www.senat.fr/rss/rapports.rss"
+#import sys
+#sys.executable
+#print(sys.executable)
 
-file = urllib2.urlopen(url)
-data = file.read()
-file.close()
+
+#import xmltodict
+#import urllib2
+import feedparser
+
+
+url = "https://www.senat.fr/rss/rapports.rss"
+RSSparser = feedparser.parse(url)
+
+#print(RSSparser.feed)
+#print(RSSparser["entries"][0])
 
