@@ -1,0 +1,3 @@
+https://www.economie.gouv.fr/rss/toutesactualites
+https://www.lemonde.fr/rss/une.xml
+https://www.senat.fr/rss/rapports.rss
