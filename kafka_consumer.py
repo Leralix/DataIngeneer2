@@ -26,4 +26,4 @@ print(session)
 for msg in consumer:
     print(msg.value['title'])
     insert = session.prepare("INSERT INTO articles.last1 (title, link) VALUES (?, ?)")
-    session.execute(insert,["test","test"])
+    session.execute(insert,[msg.value['title'],msg.value['link']])

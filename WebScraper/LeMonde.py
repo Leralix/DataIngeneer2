@@ -65,45 +65,42 @@ url_list = [
     "https://www.lemonde.fr/les-recettes-du-monde/rss_full.xml",
     "https://www.lemonde.fr/sexo/rss_full.xml",
     "https://www.lemonde.fr/guides-d-achat/rss_full.xml",
+
+    "https://www.francetvinfo.fr/monde.rss",
+    "https://www.francetvinfo.fr/france.rss",
+    "https://www.francetvinfo.fr/titres.rss"
 ]
 
 def saveArticles(articles :list):
     pass
 
+# Pour chacun des liens présents ci-dessus
 for link in url_list:
 
+    # On y accède
     r = requests.get(link)
 
+    # Transforme son contenu en dictionnaire
     r_dict = xmltodict.parse(r.text)
 
+    # Puis en JSON
     r_json = json.dumps(r_dict)
-
     articles_json = json.loads(r_json)
+
+    # Comme chaque article est sous un 'item', on les prend tous
     articles = articles_json['rss']['channel']['item']
 
-
+    # Pour chacun des ces "items" (/articles)
     for i in range(0,len(articles)):
+
+        # Son feed_id sera le lien d'où il vient
         articles[i]['feed_id'] = link
+
+        # Et à l'adresse voulu (app Flask) on envoie le JSON récolté dans la requête pour mise en base de donnée de l'article.
         url = 'http://127.0.0.1:3000/articles'
         x = requests.post(url,json=articles[i])
 
 
-
-
-
-    #x = requests.post(url,json=myobj)
-    #x = requests.post(url+"?articles_list="+str(articles))
-
-
-
-    """
-        print(articles)
-    
-        producer = KafkaProducer(bootstrap_servers='localhost:9092',value_serializer=lambda v: json.dumps(v).encode('utf-8'))
-        print(producer.bootstrap_connected())
-    
-        producer.send('article-topic',articles)
-    """
 
 
 
