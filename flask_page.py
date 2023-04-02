@@ -4,7 +4,7 @@ from threading import Thread
 from cassandra import query
 from cassandra.cqltypes import Int32Type
 from urllib.parse import urlparse
-from flask import Flask, request
+from flask import Flask, request, render_template
 from kafka import KafkaProducer, KafkaConsumer
 from cassandra.cluster import Cluster
 
@@ -61,10 +61,14 @@ def get_10_last_article():
 
     # Affichage des articles en question
     for resultat in res2:
+        render.append(resultat)
         print(resultat.feed_id)
         print(resultat.article_id)
         print(resultat.date_pub)
-    return render
+
+    resultats = render
+    print(resultats)
+    return render_template('display_list.html', resultats=resultats)
 
 @app.route('/articles/<string:article_id>',methods=['GET'])
 def get_article_details(article_id):
@@ -85,10 +89,12 @@ def get_article_details(article_id):
     req = session.prepare("""SELECT * FROM articles.details WHERE article_id=? ALLOW FILTERING""")
     req2 = session.execute(req,[article_id])
 
+    render = []
     # Affiche le résultat
     for resultat in req2:
+        render.append(resultat)
         print(resultat)
-    return "test2"
+    return render_template('display_list.html', resultats=render)
 
 
 
@@ -117,7 +123,7 @@ def run_consumer():
                                    )""")
 
     # Création d'un utilisateur test
-    session.execute("""INSERT INTO articles.user (user_id, feed_id) VALUES('1', ['www.lemonde.fr','www.francetvinfo.fr'])""")
+    session.execute("""INSERT INTO articles.user (user_id, feed_id) VALUES('1', ['www.lemonde.fr','www.francetvinfo.fr','www.europe1.fr'])""")
 
     # Lignes de TEST
     #session.execute("""DROP TABLE IF EXISTS articles.last""")
@@ -131,6 +137,7 @@ def run_consumer():
                                  title text,
                                  feed_id text,
                                  link text,
+                                 description text,
                                  date_y text,
                                  date_pub timestamp,
                                  PRIMARY KEY (date_y, date_pub, link)
@@ -143,6 +150,7 @@ def run_consumer():
                                  title text,
                                  feed_id text,
                                  link text,
+                                 description text,
                                  date_y text,
                                  date_pub timestamp,
                                  PRIMARY KEY (article_id)
@@ -154,20 +162,21 @@ def run_consumer():
     # Et les mettent dans les tables.
     for msg in consumer:
         date_str = msg.value['pubDate']
-        date_obj = datetime.strptime(date_str, '%a, %d %b %Y %H:%M:%S %z')
-        date_cassandra = date_obj.strftime("%Y-%m-%d %H:%M")
+        date_str = date_str.replace(' 23 ', ' 2023 ')
+        date_obj = datetime.strptime(' '.join(date_str.split(' ')[:-1]), '%a, %d %b %Y %H:%M:%S')
+        date_cassandra = date_obj.strftime("%Y-%m-%d %H:%M:%S")
 
-        date_cassandra2 = datetime.strptime(date_cassandra, "%Y-%m-%d %H:%M")
+        date_cassandra2 = datetime.strptime(date_cassandra, "%Y-%m-%d %H:%M:%S")
         date_cassandra_y = date_obj.strftime("%Y")
 
 
         feed = urlparse(msg.value['feed_id']).netloc
         id_article = hash(msg.value['link'])
-        insert = session.prepare("INSERT INTO articles.last (article_id, feed_id, title, link, date_y, date_pub) VALUES (?, ?, ?, ?, ?, ?)")
-        session.execute(insert, [str(id_article),feed, msg.value['title'], msg.value['link'],  date_cassandra_y, date_cassandra2])
+        insert = session.prepare("INSERT INTO articles.last (description, article_id, feed_id, title, link, date_y, date_pub) VALUES (?, ?, ?, ?, ?, ?, ?)")
+        session.execute(insert, [msg.value['description'], str(id_article),feed, msg.value['title'], msg.value['link'],  date_cassandra_y, date_cassandra2])
 
-        insert = session.prepare("INSERT INTO articles.details (article_id, feed_id, title, link, date_y, date_pub) VALUES (?, ?, ?, ?, ?, ?)")
-        session.execute(insert, [str(id_article),feed, msg.value['title'], msg.value['link'],  date_cassandra_y, date_cassandra2])
+        insert = session.prepare("INSERT INTO articles.details (description, article_id, feed_id, title, link, date_y, date_pub) VALUES (?, ?, ?, ?, ?, ?, ?)")
+        session.execute(insert, [msg.value['description'], str(id_article),feed, msg.value['title'], msg.value['link'],  date_cassandra_y, date_cassandra2])
 
 
 

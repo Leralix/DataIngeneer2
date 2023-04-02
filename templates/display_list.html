@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Résultats Cassandra</title>
+  </head>
+  <body>
+    <h1>Résultats Cassandra</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Titre</th>
+          <th>Feed d'origine</th>
+          <th>Date de publication</th>
+          <th>Description</th>
+          <th>Lien</th>
+
+
+        </tr>
+      </thead>
+      <tbody>
+        {% for resultat in resultats %}
+          <tr>
+            <td> {{ resultat.title }}</td>
+            <td>{{ resultat.feed_id }}</td>
+            <td> {{ resultat.date_pub }}</td>
+            <td> {{ resultat.description }}</td>
+            <td><a href = {{ resultat.link }}>Lien</a> </td>
+
+
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>

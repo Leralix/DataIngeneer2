@@ -11,7 +11,7 @@ class Articles:
         self.pubDate = pubDate
         self.link = link
 
-url_list = [
+lemonde_list = [
     "https://www.lemonde.fr/rss/une.xml",
     "https://www.lemonde.fr/international/rss_full.xml",
     "https://www.lemonde.fr/europe/rss_full.xml",
@@ -66,9 +66,18 @@ url_list = [
     "https://www.lemonde.fr/sexo/rss_full.xml",
     "https://www.lemonde.fr/guides-d-achat/rss_full.xml",
 
-    "https://www.francetvinfo.fr/monde.rss",
-    "https://www.francetvinfo.fr/france.rss",
-    "https://www.francetvinfo.fr/titres.rss"
+
+]
+
+url_list = [
+    "https://www.francetvinfo.fr/titres.rss",
+    "https://www.lemonde.fr/rss/une.xml",
+    "https://www.bfmtv.com/rss/news-24-7/",
+    "https://www.01net.com/actualites/feed/",
+    "https://www.europe1.fr/rss.xml",
+    "https://www.ouest-france.fr/rss/une",
+    "https://dwh.lequipe.fr/api/edito/rss?path=/",
+
 ]
 
 def saveArticles(articles :list):
@@ -76,7 +85,7 @@ def saveArticles(articles :list):
 
 # Pour chacun des liens présents ci-dessus
 for link in url_list:
-
+    print(link)
     # On y accède
     r = requests.get(link)
 
