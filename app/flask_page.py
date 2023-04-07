@@ -14,7 +14,7 @@ app = Flask(__name__)
 # Route initiale lors de la création de l'application (inutile dans ce cas)
 @app.route('/')
 def index():
-    return "Hello World"
+    return render_template('main.html')
 
 
 @app.route('/articles', methods=['POST'])
@@ -184,18 +184,18 @@ def run_consumer():
 if __name__ == '__main__':
 
     # Création des Consumer et Producer Kafka néecessaire au fonctionnement de l'application.
-    producer = KafkaProducer(bootstrap_servers='localhost:9092',value_serializer=lambda v: json.dumps(v).encode('utf-8'))
-    consumer = KafkaConsumer('article-topic', value_deserializer=json.loads)
+    producer = KafkaProducer(bootstrap_servers='kafka-1:9092',value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+    consumer = KafkaConsumer('article-topic', bootstrap_servers='kafka-1:9092', value_deserializer=json.loads)
 
     print(producer.bootstrap_connected())
 
     # Connexion à la base de données
-    cluster = Cluster(['localhost'], port=9042)
+    cluster = Cluster(['cassandra1'], port=9042)
     session = cluster.connect()
 
     # Lancement du consumer kafka en parallèle de l'application
     consumer_thread = Thread(target=run_consumer)
     consumer_thread.start()
 
-    app.run(host='127.0.0.1', port=3000)
+    app.run(host='0.0.0.0')
 

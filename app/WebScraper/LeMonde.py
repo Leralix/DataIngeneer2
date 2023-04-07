@@ -76,7 +76,7 @@ url_list = [
     "https://www.01net.com/actualites/feed/",
     "https://www.europe1.fr/rss.xml",
     "https://www.ouest-france.fr/rss/une",
-    "https://dwh.lequipe.fr/api/edito/rss?path=/",
+    #"https://dwh.lequipe.fr/api/edito/rss?path=/",
 
 ]
 
@@ -95,7 +95,6 @@ for link in url_list:
     # Puis en JSON
     r_json = json.dumps(r_dict)
     articles_json = json.loads(r_json)
-
     # Comme chaque article est sous un 'item', on les prend tous
     articles = articles_json['rss']['channel']['item']
 
