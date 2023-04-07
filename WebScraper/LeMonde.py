@@ -80,9 +80,6 @@ url_list = [
 
 ]
 
-def saveArticles(articles :list):
-    pass
-
 # Pour chacun des liens présents ci-dessus
 for link in url_list:
     print(link)
