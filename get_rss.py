@@ -1,15 +1,4 @@
-from bs4 import BeautifulSoup
-import json
-import requests
-import xmltodict
-from kafka import KafkaProducer
-
-class Articles:
-    def __init__(self,feed_id,article_id,pubDate,link):
-        self.feed_id = feed_id
-        self.article_id = article_id
-        self.pubDate = pubDate
-        self.link = link
+from WebScraper.RSS_Scraper import rss_scraper
 
 lemonde_list = [
     "https://www.lemonde.fr/rss/une.xml",
@@ -77,36 +66,10 @@ url_list = [
     "https://www.europe1.fr/rss.xml",
     "https://www.ouest-france.fr/rss/une",
     "https://dwh.lequipe.fr/api/edito/rss?path=/",
-
+    "https://www.leprogres.fr/rss",
+    "https://www.jeuxvideo.com/rss/rss.xml",
+    "https://www.jeuxvideo.com/rss/rss-news.xml"
 ]
 
-# Pour chacun des liens présents ci-dessus
-for link in url_list:
-    print(link)
-    # On y accède
-    r = requests.get(link)
-
-    # Transforme son contenu en dictionnaire
-    r_dict = xmltodict.parse(r.text)
-
-    # Puis en JSON
-    r_json = json.dumps(r_dict)
-    articles_json = json.loads(r_json)
-
-    # Comme chaque article est sous un 'item', on les prend tous
-    articles = articles_json['rss']['channel']['item']
-
-    # Pour chacun des ces "items" (/articles)
-    for i in range(0,len(articles)):
-
-        # Son feed_id sera le lien d'où il vient
-        articles[i]['feed_id'] = link
-
-        # Et à l'adresse voulu (app Flask) on envoie le JSON récolté dans la requête pour mise en base de donnée de l'article.
-        url = 'http://127.0.0.1:3000/articles'
-        x = requests.post(url,json=articles[i])
-
-
-
-
-
+rss_getter = rss_scraper(url_list,'http://127.0.0.1:3000/articles')
+rss_getter.get_articles()
